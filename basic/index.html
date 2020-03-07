@@ -44,18 +44,21 @@
       </nav>
 
       <div class="container">
-          <table class="table table-striped" x-data="{ list: userService.list }">
+          <table class="table table-striped" x-data="service()" x-init="startInterval()">
               <thead>
                   <tr>
                       <th>name</th>
-                      <th>email</th>
+                      <th>email 
+                          <span x-text="show"></span>
+                      </th>
                   </tr>
               </thead>
               <tbody>
-                  <template x-for="user in list" :key="name">
+                  <template x-for="user in list" :key="user">
                       <tr>
                           <td>
-                              <input type="text" x-bind:value="user.name">
+                              <!-- <input type="text" x-bind:value="user.name"> -->
+                              <span x-text="user.name"></span>
                           </td>
                           <td x-text="user.email"></td>
                       </tr>
