@@ -1,46 +1,8 @@
-class UserService {
-    constructor() {
-        this.dataList = [
-            {name: 'Joe', email: 'test@test.com'},
-            {name: 'Joe', email: 'test@test.com'},
-            {name: 'Joe', email: 'test@test.com'},
-            {name: 'Joe', email: 'test@test.com'},
-            {name: 'Joe', email: 'test@test.com'},
-            {name: 'Joe', email: 'test@test.com'},
-        ];
-
-        this.show = true;
-        
-    }
-
-    list() {
-        return this.dataList;
-    }
-
-    startInterval() {
-        setInterval( () => {
-            const index = Math.floor(Math.random() * this.dataList.length);
-            console.log( this.dataList[index] );
-            this.dataList[index].name = 'Changed';
-            this.dataList = Array.prototype.concat([], this.dataList);
-            this.show = !this.show;
-        }, 1000);
-    }
-}
-
-const userService = new UserService();
-
 const service = () => {
     return {
-        list: [
-            {name: 'Joe', email: 'test@test.com'},
-            {name: 'Joe', email: 'test@test.com'},
-            {name: 'Joe', email: 'test@test.com'},
-            {name: 'Joe', email: 'test@test.com'},
-            {name: 'Joe', email: 'test@test.com'},
-            {name: 'Joe', email: 'test@test.com'},
-        ],
-        show: true,
+        url: `http://localhost:3000/employee`,
+        list: [],
+        dispatcher: null,
         startInterval() {
             setInterval( () => {
                 const index = Math.floor(Math.random() * this.list.length);
@@ -49,6 +11,27 @@ const service = () => {
                 this.list = Array.prototype.concat([], this.list);
                 this.show = !this.show;
             }, 1000);
+        },
+        setDispatcher(dispatcher) {
+            this.dispatcher = dispatcher;
+            this.get();
+        },
+        get(id) {
+            const url = `${this.url}${id ? '/' + id : ''}`;
+            fetch(url, {cors: true, method: 'GET'})
+                .then( response => response.json() )
+                .then( data => {
+                    this.list = data.slice(0, 5);
+                    this.dispatcher('refresh', {refresh: true});
+                });
+        },
+        remove(id) {
+            const url = `${this.url}/${id}`;
+            fetch(url, {cors: true, method: 'DELETE'})
+                .then( response => response.json() )
+                .then( data => {
+                    this.get();
+                });
         }
     }
 }
